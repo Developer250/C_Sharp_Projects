@@ -33,18 +33,94 @@ namespace PingPong
 
         private void GameTimerEvent(object sender, EventArgs e)
         {
+            //Ball goes off the top edge and bottom edge.
+            ball.Top -= bsllYSpeed;
+            ball.Left -= bsllXSpeed;
 
-        }
 
-        private void KeyIsDown(object sender, KeyEventArgs e)
+            this.Text = "Playerscore: ", + playerScore + "-- Computerscore ", +computerScore;
+
+            if(ball.Top > 0 || ball.bottom > this.ClientSize.Height) //Ball goes off the top edge downwards
+            {
+                bsllYSpeed = -bsllYSpeed;
+            }
+
+            //Checking if the ball goes left or right. When it goes by the computer or player, the other gets a point
+            if (ball.Left < -2)
+            {
+                ball.Left = 300;
+                bsllXSpeed = -bsllXSpeed;
+                computerScore++;
+            }
+
+            if (ball.Right < +2)
+            {
+                ball.Right = 300;
+                bsllXSpeed = -bsllXSpeed;
+                playerScore++;
+
+                if (computer.Top <= 1) // Computer movement from the top. reseting the computer the computer
+                {
+                    computer.Top = 0;
+                }
+
+                else if (computer.Bottom >= this.ClientSize.Height)
+                {
+                    computerScore.Top = this.ClientSize.Height - computer.Height;
+                }
+
+                if (ball.Top < computer.Top + (computerHeight / 2) && ball.Left > 300)
+                {
+                    computer.Top -= speed;
+                }
+                if (ball.Top > computer.Top + (computerHeight / 2) && ball.Left > 300)
+                {
+                    computer.Top += speed;
+                }
+
+                computer_speed_change -= 1; //Slowing the speed
+
+                if (computer_speed_change < 0) // Checking the speed
+                {
+                    speed = i[rand.Next(i.Lenght)]; //Taking a new random speed for the comp
+                    computer_speed_change = 50;
+                }
+
+                //Checking if the player is moving towards top of the form ---> adding speed or reducing (depends if it's more than 0 or not)
+                if (goDown && playerScore.Top + playerScore.Height < this.ClientSize.Height) 
+                {
+                    player.Top += playerSpeed;
+                }
+
+                if (goUp && playerScore.Top > 0)
+                {
+                    player.Top -= playerSpeed;
+                }
+
+                //Checking is the playr's picturebox or comp's picbox glitching.
+                CheckCollission(ball, player, player.Right + 5);
+                CheckCollission(ball, computer, computer.Left - 35);
+
+                if (computerScore > 5)
+                {
+                    GameOver("Sorry you lost the game");
+                }
+
+                else if (playerScore > 5)
+                {
+                    GameOver("You wont the game");
+                }
+
+
+                private void KeyIsDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down)
             {
                 goDown = true;
 
-                
             }
-                if (e.KeyCode == Keys.Up) {
+                if (e.KeyCode == Keys.Up) 
+            {
                 goUp = true;
             }
             
